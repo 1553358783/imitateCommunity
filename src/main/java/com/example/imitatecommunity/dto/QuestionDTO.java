@@ -9,7 +9,7 @@ import lombok.Data;
  * @createDate: 2019/12/26
  */
 @Data
-public class QuestionDto {
+public class QuestionDTO {
     private Integer id;
     private String title;
     private String description;

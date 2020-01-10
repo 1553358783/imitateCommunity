@@ -1,8 +1,7 @@
 package com.example.imitatecommunity.controller;
 
-import com.example.imitatecommunity.model.Question;
 import com.example.imitatecommunity.mapper.QuestionMapper;
-import com.example.imitatecommunity.mapper.UserMapper;
+import com.example.imitatecommunity.model.Question;
 import com.example.imitatecommunity.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -24,8 +22,6 @@ public class PublishController {
 
     @Autowired
     private QuestionMapper questionMapper;
-    @Autowired
-    private UserMapper userMapper;
     @GetMapping("/publish")
     public String publish(){
         return "publish";
@@ -51,23 +47,7 @@ public class PublishController {
             model.addAttribute("error","标签不能为空");
             return "/publish";
         }
-        User user = null;
-        Cookie[] cookies = request.getCookies();
-        if(cookies != null){
-            for (Cookie cookie:cookies
-            ) {
-                if(cookie.getName().equals("token")){
-                    String value = cookie.getValue();
-                    user = userMapper.findByToken(value);
-                    if(user != null){
-                        request.getSession().setAttribute("user",user);
-                    }
-                    break;
-                }
-
-            }
-        }
-
+        User user = (User)request.getSession().getAttribute("user");
         if(user == null){
             model.addAttribute("error","您暂未登录");
             return "publish";
@@ -80,6 +60,6 @@ public class PublishController {
         question.setGmtCreated(System.currentTimeMillis());
         question.setGmtModified(question.getGmtCreated());
         questionMapper.create(question);
-        return "index";
+        return "redirect:/";
     }
 }
